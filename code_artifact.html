@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>서윤아 | 일상의 온기를 적는 작가</title>
+  
+  <!-- Tailwind CSS 로드 -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Noto Serif KR (명조) & Noto Sans KR (고딕) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600&family=Noto+Serif+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind 커스텀 설정 -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['"Noto Serif KR"', 'serif'],
+            sans: ['"Noto Sans KR"', 'sans-serif'],
+          },
+          colors: {
+            ivory: '#FDFBF7',
+            cream: '#F7F3EB',
+            blush: '#FCEEEF',
+            coral: '#F28B82',
+            coralDark: '#E06D63',
+            ink: '#2D2A26',
+            muted: '#6E6860',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* 부드러운 페이지 전환 애니메이션 */
+    .page-view {
+      display: none;
+      animation: fadeIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .page-view.active {
+      display: block;
+    }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* 키티 일러스트 미세 부유 애니메이션 */
+    @keyframes floatSlow {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-6px); }
+    }
+    .animate-float {
+      animation: floatSlow 4s ease-in-out infinite;
+    }
+
+    /* 스크롤바 커스텀 */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #FDFBF7;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #E5DDD3;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #F28B82;
+    }
+  </style>
+</head>
+<body class="bg-ivory text-ink font-sans antialiased selection:bg-blush selection:text-coralDark min-h-screen flex flex-col">
+
+  <!-- 상단 고정 내비게이션 바 -->
+  <header class="sticky top-0 z-40 bg-ivory/90 backdrop-blur-md border-b border-stone-200/70 transition-all">
+    <div class="max-w-5xl mx-auto px-5 sm:px-8 h-16 sm:h-20 flex items-center justify-between">
+      <!-- 작가 로고 / 필명 -->
+      <button onclick="navigateTo('home')" class="flex items-center gap-2.5 text-left group focus:outline-none">
+        <span class="w-8 h-8 rounded-full bg-blush border border-coral/30 flex items-center justify-center text-coral group-hover:scale-105 transition-transform">
+          <!-- 미니 키티 리본 아이콘 -->
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 10.5c-1.5-2.5-4.5-4-7-3-2 .8-2.5 3.5-1.5 5.5 1 2 3.5 2.5 6 1.5.7-.3 1.5-.8 2.5-1.5 1 .7 1.8 1.2 2.5 1.5 2.5 1 5 .5 6-1.5 1-2 .5-4.7-1.5-5.5-2.5-1-5.5.5-7 3z"/>
+            <circle cx="12" cy="12" r="2.2" fill="#FFF"/>
+          </svg>
+        </span>
+        <span class="font-serif text-lg sm:text-xl font-semibold tracking-tight text-ink">
+          서윤아 <span class="text-xs font-sans font-normal text-muted ml-1 hidden sm:inline">Writer Studio</span>
+        </span>
+      </button>
+
+      <!-- 데스크톱 4개 고정 메뉴 -->
+      <nav class="hidden md:flex items-center gap-8" aria-label="주 메뉴">
+        <button onclick="navigateTo('home')" data-nav="home" class="nav-link relative py-1 text-sm font-medium text-ink transition-colors hover:text-coralDark">
+          홈
+        </button>
+        <button onclick="navigateTo('about')" data-nav="about" class="nav-link relative py-1 text-sm font-medium text-muted transition-colors hover:text-coralDark">
+          자기소개
+        </button>
+        <button onclick="navigateTo('works')" data-nav="works" class="nav-link relative py-1 text-sm font-medium text-muted transition-colors hover:text-coralDark">
+          작품소개
+        </button>
+        <button onclick="navigateTo('guestbook')" data-nav="guestbook" class="nav-link relative py-1 text-sm font-medium text-muted transition-colors hover:text-coralDark">
+          방명록
+        </button>
+      </nav>
+
+      <!-- 모바일 햄버거 메뉴 버튼 -->
+      <button id="mobile-menu-btn" onclick="toggleMobileMenu()" class="md:hidden p-2 rounded-xl text-ink hover:bg-cream focus:outline-none" aria-label="메뉴 열기">
+        <svg id="menu-icon-open" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 7h16M4 12h16M4 17h16"/>
+        </svg>
+        <svg id="menu-icon-close" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- 모바일 드롭다운 메뉴 -->
+    <div id="mobile-menu" class="hidden md:hidden bg-ivory border-b border-stone-200/80 px-5 pt-2 pb-5 space-y-1">
+      <button onclick="navigateTo('home')" data-nav-mobile="home" class="mobile-nav-link block w-full text-left px-4 py-3 rounded-xl text-sm font-medium bg-blush/70 text-coralDark">
+        홈
+      </button>
+      <button onclick="navigateTo('about')" data-nav-mobile="about" class="mobile-nav-link block w-full text-left px-4 py-3 rounded-xl text-sm font-medium text-muted hover:bg-cream">
+        자기소개
+      </button>
+      <button onclick="navigateTo('works')" data-nav-mobile="works" class="mobile-nav-link block w-full text-left px-4 py-3 rounded-xl text-sm font-medium text-muted hover:bg-cream">
+        작품소개
+      </button>
+      <button onclick="navigateTo('guestbook')" data-nav-mobile="guestbook" class="mobile-nav-link block w-full text-left px-4 py-3 rounded-xl text-sm font-medium text-muted hover:bg-cream">
+        방명록
+      </button>
+    </div>
+  </header>
+
+  <!-- 메인 콘텐츠 컨테이너 -->
+  <main class="flex-grow max-w-5xl w-full mx-auto px-5 sm:px-8 py-10 sm:py-16">
+
+    <!-- ========================================== -->
+    <!-- 1. 홈 (랜딩 페이지)                          -->
+    <!-- ========================================== -->
+    <section id="page-home" class="page-view active space-y-20">
+      <!-- 히어로 섹션: 깔끔한 키티 일러스트 & 작가 인사말 -->
+      <div class="bg-white rounded-3xl p-8 sm:p-14 border border-stone-200/60 shadow-sm relative overflow-hidden">
+        <!-- 배경 파스텔 장식 원 -->
+        <div class="absolute -top-16 -right-16 w-64 h-64 rounded-full bg-blush/70 blur-2xl pointer-events-none"></div>
+        <div class="absolute -bottom-20 -left-16 w-56 h-56 rounded-full bg-cream blur-xl pointer-events-none"></div>
+
+        <div class="relative z-10 flex flex-col md:flex-row items-center gap-10 md:gap-12">
+          <!-- 키티 미니멀 SVG 일러스트 카드 -->
+          <div class="w-56 h-56 sm:w-64 sm:h-64 shrink-0 rounded-full bg-gradient-to-b from-blush/80 to-cream border-4 border-white shadow-md flex items-center justify-center animate-float">
+            <!-- 사랑스러운 키티 감성의 고양이 일러스트 SVG -->
+            <svg viewBox="0 0 220 200" class="w-48 h-48 sm:w-52 sm:h-52 drop-shadow-sm" xmlns="http://www.w3.org/2000/svg">
+              <!-- 부드러운 원형 배경 후광 -->
+              <circle cx="110" cy="108" r="76" fill="#FFFFFF" opacity="0.7"/>
+              
+              <!-- 왼쪽 귀 -->
+              <path d="M56 76 L46 32 C45 27 51 24 55 27 L86 50 Z" fill="#FFFFFF" stroke="#3B3531" stroke-width="3.5" stroke-linejoin="round"/>
+              <path d="M58 68 L52 40 L76 54 Z" fill="#FCEEEF"/>
+              
+              <!-- 오른쪽 귀 -->
+              <path d="M164 76 L174 32 C175 27 169 24 165 27 L134 50 Z" fill="#FFFFFF" stroke="#3B3531" stroke-width="3.5" stroke-linejoin="round"/>
+              
+              <!-- 얼굴 윤곽 (통통하고 단정한 키티 실루엣) -->
+              <ellipse cx="110" cy="108" rx="64" ry="50" fill="#FFFFFF" stroke="#3B3531" stroke-width="3.5"/>
+
+              <!-- 시그니처 파스텔 코랄 리본 (오른쪽 귀 앞) -->
+              <g transform="translate(148, 48) rotate(18)">
+                <!-- 왼쪽 리본 날개 -->
+                <path d="M-4 0 C-18 -14 -28 -8 -26 4 C-24 15 -12 14 -4 4 Z" fill="#F28B82" stroke="#3B3531" stroke-width="3" stroke-linejoin="round"/>
+                <!-- 오른쪽 리본 날개 -->
+                <path d="M4 0 C18 -14 28 -8 26 4 C24 15 12 14 4 4 Z" fill="#F28B82" stroke="#3B3531" stroke-width="3" stroke-linejoin="round"/>
+                <!-- 리본 매듭 -->
+                <circle cx="0" cy="2" r="6.5" fill="#F7A8A1" stroke="#3B3531" stroke-width="3"/>
+              </g>
+
+              <!-- 단추 같은 까만 눈 -->
+              <ellipse cx="83" cy="108" rx="4.5" ry="6" fill="#3B3531"/>
+              <ellipse cx="137" cy="108" rx="4.5" ry="6" fill="#3B3531"/>
+
+              <!-- 노란빛/살구빛 동그란 코 -->
+              <ellipse cx="110" cy="117" rx="5.5" ry="4" fill="#F6C86E" stroke="#3B3531" stroke-width="2.5"/>
+
+              <!-- 발그레한 볼터치 -->
+              <ellipse cx="73" cy="119" rx="8" ry="4.5" fill="#FAD2D5" opacity="0.85"/>
+              <ellipse cx="147" cy="119" rx="8" ry="4.5" fill="#FAD2D5" opacity="0.85"/>
+
+              <!-- 왼쪽 수염 3가닥 -->
+              <line x1="36" y1="101" x2="56" y2="104" stroke="#3B3531" stroke-width="3" stroke-linecap="round"/>
+              <line x1="33" y1="113" x2="54" y2="113" stroke="#3B3531" stroke-width="3" stroke-linecap="round"/>
+              <line x1="38" y1="125" x2="57" y2="122" stroke="#3B3531" stroke-width="3" stroke-linecap="round"/>
+
+              <!-- 오른쪽 수염 3가닥 -->
+              <line x1="184" y1="101" x2="164" y2="104" stroke="#3B3531" stroke-width="3" stroke-linecap="round"/>
+              <line x1="187" y1="113" x2="166" y2="113" stroke="#3B3531" stroke-width="3" stroke-linecap="round"/>
+              <line x1="182" y1="125" x2="163" y2="122" stroke="#3B3531" stroke-width="3" stroke-linecap="round"/>
+
+              <!-- 책갈피/연필 소품 디테일 (하단) -->
+              <path d="M88 158 Q110 166 132 158" fill="none" stroke="#F28B82" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+          </div>
+
+          <!-- 작가 소개 텍스트 및 버튼 -->
+          <div class="text-center md:text-left space-y-5 flex-1">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blush text-coralDark text-xs font-medium tracking-wide">
+              <span>✦</span>
+              <span>소설가 & 에세이스트 서윤아의 작업실</span>
+            </div>
+            
+            <h1 class="font-serif text-2xl sm:text-4xl font-semibold text-ink leading-snug tracking-tight">
+              “다정한 문장 한 줄이<br class="hidden sm:inline" />
+              오늘의 작은 온기가 되기를 바랍니다.”
+            </h1>
+            
+            <p class="text-muted text-sm sm:text-base leading-relaxed max-w-xl">
+              안녕하세요, 일상 속 지나치기 쉬운 작고 반짝이는 순간들을 기록하는 작가 서윤아입니다. 
+              햇살이 머무는 창가에서 고양이와 함께 빚어낸 이야기들을 이곳에 차곡차곡 담아두었습니다.
+            </p>
+
+            <!-- 세부 페이지 바로가기 버튼 그룹 -->
+            <div class="pt-2 flex flex-wrap items-center justify-center md:justify-start gap-3">
+              <button onclick="navigateTo('works')" class="px-6 py-3 rounded-full bg-coral text-white text-sm font-medium shadow-sm hover:bg-coralDark transition-all active:scale-95">
+                작품 둘러보기
+              </button>
+              <button onclick="navigateTo('about')" class="px-6 py-3 rounded-full bg-cream text-ink border border-stone-200 text-sm font-medium hover:bg-blush/60 hover:border-coral/30 transition-all active:scale-95">
+                작가 소개
+              </button>
+              <button onclick="navigateTo('guestbook')" class="px-6 py-3 rounded-full bg-white text-muted border border-stone-200 text-sm font-medium hover:text-coralDark hover:border-coral/40 transition-all active:scale-95">
+                방명록 남기기
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 대표작 미리보기 섹션 -->
+      <div class="space-y-6">
+        <div class="flex items-end justify-between border-b border-stone-200/80 pb-4">
+          <div>
+            <span class="text-xs font-medium text-coral uppercase tracking-widest">Featured Works</span>
+            <h2 class="font-serif text-xl sm:text-2xl font-semibold text-ink mt-1">대표 출간작 미리보기</h2>
+          </div>
+          <button onclick="navigateTo('works')" class="text-xs sm:text-sm font-medium text-muted hover:text-coralDark flex items-center gap-1 transition-colors">
+            전체 작품 보기 <span>→</span>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- 대표작 1 -->
+          <div onclick="openWorkModal(0)" class="group cursor-pointer bg-white rounded-2xl p-5 border border-stone-200/70 hover:border-coral/50 hover:shadow-md transition-all flex flex-col justify-between">
+            <div>
+              <div class="aspect-[4/3] rounded-xl bg-gradient-to-br from-blush to-cream mb-4 flex flex-col items-center justify-center p-4 relative overflow-hidden">
+                <span class="text-3xl mb-2 group-hover:scale-110 transition-transform">🎀</span>
+                <span class="font-serif text-sm font-semibold text-ink text-center">리본을 맨 흰 고양이의 오후</span>
+                <span class="text-[11px] text-muted mt-1">장편소설 · 2025</span>
+              </div>
+              <div class="flex items-center gap-2 mb-2">
+                <span class="px-2.5 py-0.5 rounded-full bg-blush text-coralDark text-[11px] font-medium">소설</span>
+                <span class="text-xs text-muted">2025. 04</span>
+              </div>
+              <h3 class="font-serif text-lg font-semibold text-ink group-hover:text-coralDark transition-colors">리본을 맨 흰 고양이의 오후</h3>
+              <p class="text-xs sm:text-sm text-muted mt-2 line-clamp-2 leading-relaxed">
+                오래된 서점 골목에 나타난 빨간 리본의 고양이와, 잃어버린 계절을 되찾아가는 네 사람의 따뜻한 연대기.
+              </p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between text-xs font-medium text-coralDark">
+              <span>상세 보기 및 발췌 읽기</span>
+              <span>↗</span>
+            </div>
+          </div>
+
+          <!-- 대표작 2 -->
+          <div onclick="openWorkModal(1)" class="group cursor-pointer bg-white rounded-2xl p-5 border border-stone-200/70 hover:border-coral/50 hover:shadow-md transition-all flex flex-col justify-between">
+            <div>
+              <div class="aspect-[4/3] rounded-xl bg-gradient-to-br from-cream to-amber-50/70 mb-4 flex flex-col items-center justify-center p-4 relative overflow-hidden">
+                <span class="text-3xl mb-2 group-hover:scale-110 transition-transform">☕</span>
+                <span class="font-serif text-sm font-semibold text-ink text-center">식지 않는 홍차의 온도</span>
+                <span class="text-[11px] text-muted mt-1">산문집 · 2024</span>
+              </div>
+              <div class="flex items-center gap-2 mb-2">
+                <span class="px-2.5 py-0.5 rounded-full bg-cream text-amber-800 text-[11px] font-medium">에세이</span>
+                <span class="text-xs text-muted">2024. 10</span>
+              </div>
+              <h3 class="font-serif text-lg font-semibold text-ink group-hover:text-coralDark transition-colors">식지 않는 홍차의 온도</h3>
+              <p class="text-xs sm:text-sm text-muted mt-2 line-clamp-2 leading-relaxed">
+                매일 아침 찻잔을 데우며 기록한 사계절의 단상들. 바쁜 하루 끝, 마음을 다독이는 마흔두 편의 짧은 편지.
+              </p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between text-xs font-medium text-coralDark">
+              <span>상세 보기 및 발췌 읽기</span>
+              <span>↗</span>
+            </div>
+          </div>
+
+          <!-- 대표작 3 -->
+          <div onclick="openWorkModal(2)" class="group cursor-pointer bg-white rounded-2xl p-5 border border-stone-200/70 hover:border-coral/50 hover:shadow-md transition-all flex flex-col justify-between">
+            <div>
+              <div class="aspect-[4/3] rounded-xl bg-gradient-to-br from-rose-50 to-orange-50/60 mb-4 flex flex-col items-center justify-center p-4 relative overflow-hidden">
+                <span class="text-3xl mb-2 group-hover:scale-110 transition-transform">✉️</span>
+                <span class="font-serif text-sm font-semibold text-ink text-center">구름 우체국의 비밀 편지</span>
+                <span class="text-[11px] text-muted mt-1">단편소설집 · 2023</span>
+              </div>
+              <div class="flex items-center gap-2 mb-2">
+                <span class="px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-700 text-[11px] font-medium">단편</span>
+                <span class="text-xs text-muted">2023. 06</span>
+              </div>
+              <h3 class="font-serif text-lg font-semibold text-ink group-hover:text-coralDark transition-colors">구름 우체국의 비밀 편지</h3>
+              <p class="text-xs sm:text-sm text-muted mt-2 line-clamp-2 leading-relaxed">
+                전하지 못한 진심이 모여드는 언덕 위 작은 우체국을 배경으로 펼쳐지는 일곱 편의 환상 동화적 단편집.
+              </p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between text-xs font-medium text-coralDark">
+              <span>상세 보기 및 발췌 읽기</span>
+              <span>↗</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 2. 자기소개 (About)                         -->
+    <!-- ========================================== -->
+    <section id="page-about" class="page-view space-y-12">
+      <!-- 상단 타이틀 -->
+      <div class="text-center max-w-2xl mx-auto space-y-3">
+        <span class="text-xs font-medium text-coral uppercase tracking-widest">About the Author</span>
+        <h1 class="font-serif text-2xl sm:text-3xl font-semibold text-ink">작가 소개</h1>
+        <p class="text-sm text-muted">작은 숨결에도 귀 기울이며 다정한 이야기를 짓습니다.</p>
+      </div>
+
+      <!-- 프로필 메인 카드 -->
+      <div class="bg-white rounded-3xl p-7 sm:p-10 border border-stone-200/70 shadow-sm flex flex-col md:flex-row items-center md:items-start gap-8 sm:gap-10">
+        <!-- 미니멀 일러스트 아바타 -->
+        <div class="w-36 h-36 sm:w-44 sm:h-44 rounded-3xl bg-blush/80 border-2 border-coral/20 flex flex-col items-center justify-center shrink-0 p-4 shadow-inner">
+          <svg viewBox="0 0 120 120" class="w-24 h-24 sm:w-28 sm:h-28">
+            <!-- 아바타 배경 -->
+            <circle cx="60" cy="60" r="52" fill="#FFFFFF"/>
+            <!-- 단발머리 실루엣 -->
+            <path d="M32 62 C32 34 88 34 88 62 L92 84 C75 88 45 88 28 84 Z" fill="#4A423D"/>
+            <!-- 얼굴 -->
+            <circle cx="60" cy="60" r="22" fill="#FFF5EE"/>
+            <!-- 앞머리 -->
+            <path d="M38 56 Q50 42 60 52 Q70 42 82 56 Q72 38 60 38 Q48 38 38 56 Z" fill="#4A423D"/>
+            <!-- 눈 & 미소 -->
+            <circle cx="52" cy="61" r="2.2" fill="#3B3531"/>
+            <circle cx="68" cy="61" r="2.2" fill="#3B3531"/>
+            <path d="M56 68 Q60 72 64 68" fill="none" stroke="#E06D63" stroke-width="2" stroke-linecap="round"/>
+            <!-- 작은 리본 핀 -->
+            <circle cx="77" cy="46" r="4" fill="#F28B82"/>
+            <!-- 만년필 아이콘 -->
+            <path d="M44 92 L76 92" stroke="#F28B82" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+          <span class="text-xs font-serif font-medium text-coralDark mt-1">서윤아 (Seo Yoon-ah)</span>
+        </div>
+
+        <!-- 소개글 & 집필 철학 -->
+        <div class="space-y-5 flex-1">
+          <div>
+            <h2 class="font-serif text-xl sm:text-2xl font-semibold text-ink">
+              “이야기는 결국 사람을 향한 가장 부드러운 안부입니다.”
+            </h2>
+            <p class="text-xs text-muted mt-1">1994년 봄 출생 · 서울과 부산을 오가며 집필</p>
+          </div>
+
+          <div class="space-y-3 text-sm sm:text-base text-ink/90 leading-relaxed">
+            <p>
+              대학에서 문예창작을 전공한 뒤, 2019년 신춘문예 단편소설 부문으로 작품 활동을 시작했습니다. 
+              화려한 사건보다는 인물의 내면에 스며드는 빛의 각도, 다정한 식탁 위의 대화, 그리고 반려동물과 나누는 말없는 교감을 섬세하게 포착하는 글을 씁니다.
+            </p>
+            <p>
+              독자분들이 책을 덮은 뒤에도 마음 한구석에 따뜻한 차 한 잔을 마신 듯한 여운이 남기를 바라며 오늘도 책상 앞에 앉습니다.
+            </p>
+          </div>
+
+          <!-- 집필 분야 및 키워드 태그 -->
+          <div class="pt-2">
+            <h3 class="text-xs font-semibold text-muted uppercase tracking-wider mb-2.5">집필 분야 & 키워드</h3>
+            <div class="flex flex-wrap gap-2">
+              <span class="px-3.5 py-1.5 rounded-full bg-blush text-coralDark text-xs font-medium">#힐링소설</span>
+              <span class="px-3.5 py-1.5 rounded-full bg-cream text-ink text-xs font-medium">#일상에세이</span>
+              <span class="px-3.5 py-1.5 rounded-full bg-cream text-ink text-xs font-medium">#고양이와산책</span>
+              <span class="px-3.5 py-1.5 rounded-full bg-cream text-ink text-xs font-medium">#서정적문체</span>
+              <span class="px-3.5 py-1.5 rounded-full bg-cream text-ink text-xs font-medium">#계절의기록</span>
+              <span class="px-3.5 py-1.5 rounded-full bg-cream text-ink text-xs font-medium">#단편소설</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 주요 약력 및 출간/수상 타임라인 -->
+      <div class="bg-white rounded-3xl p-7 sm:p-10 border border-stone-200/70 shadow-sm">
+        <h3 class="font-serif text-lg sm:text-xl font-semibold text-ink mb-6 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-coral"></span>
+          주요 약력 및 출간 연보
+        </h3>
+
+        <div class="relative border-l-2 border-blush ml-3 space-y-7 pl-6 sm:pl-8">
+          <!-- 타임라인 아이템 1 -->
+          <div class="relative">
+            <span class="absolute -left-[31px] sm:-left-[39px] top-1.5 w-3.5 h-3.5 rounded-full bg-coral border-4 border-white shadow-sm"></span>
+            <span class="text-xs font-semibold text-coralDark">2025. 04</span>
+            <h4 class="font-serif text-base font-semibold text-ink mt-0.5">장편소설 《리본을 맨 흰 고양이의 오후》 출간</h4>
+            <p class="text-xs sm:text-sm text-muted mt-1">달빛서가 출판 · 올해의 따뜻한 책 독자 선정</p>
+          </div>
+
+          <!-- 타임라인 아이템 2 -->
+          <div class="relative">
+            <span class="absolute -left-[31px] sm:-left-[39px] top-1.5 w-3.5 h-3.5 rounded-full bg-coral/70 border-4 border-white shadow-sm"></span>
+            <span class="text-xs font-semibold text-coralDark">2024. 10</span>
+            <h4 class="font-serif text-base font-semibold text-ink mt-0.5">첫 단독 산문집 《식지 않는 홍차의 온도》 출간</h4>
+            <p class="text-xs sm:text-sm text-muted mt-1">아침산책 출판 · 5쇄 돌파 및 독립서점 북토크 투어 진행</p>
+          </div>
+
+          <!-- 타임라인 아이템 3 -->
+          <div class="relative">
+            <span class="absolute -left-[31px] sm:-left-[39px] top-1.5 w-3.5 h-3.5 rounded-full bg-coral/50 border-4 border-white shadow-sm"></span>
+            <span class="text-xs font-semibold text-coralDark">2023. 06</span>
+            <h4 class="font-serif text-base font-semibold text-ink mt-0.5">단편소설집 《구름 우체국의 비밀 편지》 출간</h4>
+            <p class="text-xs sm:text-sm text-muted mt-1">제12회 푸른문예 젊은작가상 우수상 수상작 수록</p>
+          </div>
+
+          <!-- 타임라인 아이템 4 -->
+          <div class="relative">
+            <span class="absolute -left-[31px] sm:-left-[39px] top-1.5 w-3.5 h-3.5 rounded-full bg-stone-300 border-4 border-white shadow-sm"></span>
+            <span class="text-xs font-semibold text-muted">2019. 01</span>
+            <h4 class="font-serif text-base font-semibold text-ink mt-0.5">단편소설 〈창가의 귤빛〉으로 신춘문예 등단</h4>
+            <p class="text-xs sm:text-sm text-muted mt-1">작품 활동 시작 및 문예지 다수 기고</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 3. 작품소개 (Works)                         -->
+    <!-- ========================================== -->
+    <section id="page-works" class="page-view space-y-10">
+      <!-- 상단 타이틀 및 카테고리 필터 -->
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-6 border-b border-stone-200/80 pb-6">
+        <div>
+          <span class="text-xs font-medium text-coral uppercase tracking-widest">Bibliography</span>
+          <h1 class="font-serif text-2xl sm:text-3xl font-semibold text-ink mt-1">작품 소개</h1>
+          <p class="text-sm text-muted mt-1">카드를 클릭하시면 작품 해설과 책 속 발췌 문장을 읽어보실 수 있습니다.</p>
+        </div>
+
+        <!-- 카테고리 필터 버튼 -->
+        <div class="flex flex-wrap gap-2" id="work-filters">
+          <button onclick="filterWorks('all')" data-filter="all" class="filter-btn px-4 py-2 rounded-full text-xs font-medium bg-coral text-white shadow-sm transition-all">
+            전체 (6)
+          </button>
+          <button onclick="filterWorks('소설')" data-filter="소설" class="filter-btn px-4 py-2 rounded-full text-xs font-medium bg-white text-muted border border-stone-200 hover:border-coral/40 transition-all">
+            소설
+          </button>
+          <button onclick="filterWorks('에세이')" data-filter="에세이" class="filter-btn px-4 py-2 rounded-full text-xs font-medium bg-white text-muted border border-stone-200 hover:border-coral/40 transition-all">
+            에세이
+          </button>
+          <button onclick="filterWorks('단편')" data-filter="단편" class="filter-btn px-4 py-2 rounded-full text-xs font-medium bg-white text-muted border border-stone-200 hover:border-coral/40 transition-all">
+            단편
+          </button>
+        </div>
+      </div>
+
+      <!-- 작품 그리드 컨테이너 (JS로 렌더링) -->
+      <div id="works-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- JavaScript에서 동적 생성 -->
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 4. 방명록 (Guestbook)                       -->
+    <!-- ========================================== -->
+    <section id="page-guestbook" class="page-view space-y-10">
+      <!-- 상단 타이틀 -->
+      <div class="text-center max-w-xl mx-auto space-y-2">
+        <span class="text-xs font-medium text-coral uppercase tracking-widest">Guestbook</span>
+        <h1 class="font-serif text-2xl sm:text-3xl font-semibold text-ink">독자 방명록</h1>
+        <p class="text-sm text-muted">책을 읽고 느낀 감상이나 다정한 안부 인사를 남겨주세요.</p>
+      </div>
+
+      <!-- 방명록 작성 폼 -->
+      <div class="max-w-2xl mx-auto bg-white rounded-3xl p-6 sm:p-8 border border-stone-200/70 shadow-sm">
+        <form id="guestbook-form" onsubmit="handleGuestbookSubmit(event)" class="space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="gb-name" class="block text-xs font-medium text-ink mb-1.5">이름 / 닉네임</label>
+              <input type="text" id="gb-name" required maxlength="20" placeholder="예: 봄날의 독자"
+                class="w-full px-4 py-2.5 rounded-xl bg-ivory border border-stone-200 text-sm focus:outline-none focus:border-coral focus:bg-white transition-colors" />
+            </div>
+            <div>
+              <label for="gb-password" class="block text-xs font-medium text-ink mb-1.5">비밀번호 <span class="text-muted font-normal">(삭제 시 필요)</span></label>
+              <input type="password" id="gb-password" required maxlength="12" placeholder="4자리 이상 입력"
+                class="w-full px-4 py-2.5 rounded-xl bg-ivory border border-stone-200 text-sm focus:outline-none focus:border-coral focus:bg-white transition-colors" />
+            </div>
+          </div>
+
+          <div>
+            <label for="gb-message" class="block text-xs font-medium text-ink mb-1.5">응원 메시지</label>
+            <textarea id="gb-message" required rows="3" maxlength="300" placeholder="작가님께 전하고 싶은 따뜻한 이야기를 적어주세요."
+              class="w-full px-4 py-3 rounded-xl bg-ivory border border-stone-200 text-sm focus:outline-none focus:border-coral focus:bg-white transition-colors resize-none"></textarea>
+          </div>
+
+          <div class="flex items-center justify-between pt-1">
+            <span class="text-xs text-muted">작성된 글은 브라우저에 안전하게 저장됩니다.</span>
+            <button type="submit" class="px-6 py-2.5 rounded-full bg-coral text-white text-sm font-medium shadow-sm hover:bg-coralDark transition-all active:scale-95">
+              글 남기기
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- 방명록 리스트 영역 -->
+      <div class="max-w-2xl mx-auto space-y-4">
+        <div class="flex items-center justify-between px-1">
+          <h2 class="font-serif text-base font-semibold text-ink">남겨진 이야기 <span id="gb-count" class="text-coralDark ml-1">3</span></h2>
+        </div>
+        <div id="guestbook-list" class="space-y-4">
+          <!-- JavaScript에서 동적 렌더링 -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 푸터 -->
+  <footer class="border-t border-stone-200/70 bg-cream/50 mt-12">
+    <div class="max-w-5xl mx-auto px-5 sm:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted">
+      <div class="flex items-center gap-2">
+        <span class="font-serif font-semibold text-ink">서윤아 작가 작업실</span>
+        <span>·</span>
+        <span>일상의 온기를 적는 공간</span>
+      </div>
+      <div class="flex items-center gap-5">
+        <span>이메일: yoonah.studio@example.com</span>
+        <span>© 2026 Seo Yoon-ah. All rights reserved.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========================================== -->
+  <!-- 작품 상세 모달 (Work Detail Modal)          -->
+  <!-- ========================================== -->
+  <div id="work-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 sm:p-6 bg-stone-900/40 backdrop-blur-xs transition-opacity" onclick="closeWorkModalOnBackdrop(event)">
+    <div class="bg-white rounded-3xl max-w-xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 shadow-xl border border-stone-200 relative animate-[fadeIn_0.25s_ease-out]">
+      <!-- 닫기 버튼 -->
+      <button onclick="closeWorkModal()" class="absolute top-5 right-5 w-9 h-9 rounded-full bg-cream text-muted hover:text-ink hover:bg-blush flex items-center justify-center transition-colors" aria-label="닫기">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+
+      <!-- 모달 내부 콘텐츠 -->
+      <div id="modal-content" class="space-y-6">
+        <!-- JS로 채워짐 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- 방명록 삭제 비밀번호 확인 커스텀 모달        -->
+  <!-- ========================================== -->
+  <div id="delete-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-stone-900/40 backdrop-blur-xs">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl border border-stone-200 space-y-4">
+      <h3 class="font-serif text-lg font-semibold text-ink">방명록 삭제</h3>
+      <p class="text-xs text-muted">작성 시 입력했던 비밀번호를 입력해주세요.</p>
+      <input type="password" id="delete-pwd-input" placeholder="비밀번호 입력"
+        class="w-full px-4 py-2.5 rounded-xl bg-ivory border border-stone-200 text-sm focus:outline-none focus:border-coral" />
+      <p id="delete-error-msg" class="text-xs text-rose-600 hidden">비밀번호가 일치하지 않습니다.</p>
+      <div class="flex justify-end gap-2 pt-2">
+        <button onclick="closeDeleteModal()" class="px-4 py-2 rounded-xl bg-cream text-muted text-xs font-medium hover:text-ink">취소</button>
+        <button onclick="confirmDeleteGuestbook()" class="px-4 py-2 rounded-xl bg-coral text-white text-xs font-medium hover:bg-coralDark">삭제하기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 토스트 알림 메시지 박스 (alert 대체용) -->
+  <div id="toast-box" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 transition-all duration-300 translate-y-2">
+    <div class="bg-ink text-white text-xs sm:text-sm px-5 py-3 rounded-full shadow-lg flex items-center gap-2">
+      <span class="text-coral">✦</span>
+      <span id="toast-text">알림 메시지</span>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- JavaScript 로직                            -->
+  <!-- ========================================== -->
+  <script>
+    // 1. 작품 데이터 정의 (총 6편)
+    const worksData = [
+      {
+        id: 0,
+        category: '소설',
+        title: '리본을 맨 흰 고양이의 오후',
+        year: '2025',
+        publisher: '달빛서가',
+        emoji: '🎀',
+        bgGradient: 'from-blush to-cream',
+        summary: '오래된 서점 골목에 나타난 빨간 리본의 고양이와, 잃어버린 계절을 되찾아가는 네 사람의 따뜻한 연대기.',
+        description: '번아웃으로 직장을 그만둔 일러스트레이터 지우가 우연히 골목 끝 헌책방 앞에서 빨간 리본을 맨 흰 고양이를 만나면서 시작되는 장편소설입니다. 고양이를 따라 들어간 서점에서 각자의 사연을 품은 이웃들을 만나며 서서히 일상의 온기를 회복하는 과정을 섬세하게 그렸습니다.',
+        excerpt: '“고양이는 대답 대신 꼬리 끝을 동그랗게 말아 올렸다. 오후 네 시의 햇살이 서점 유리창을 통과해 마룻바닥 위에 긴 리본 모양의 그림자를 드리우고 있었다. 이상하게도 그날은 아무것도 서두르지 않아도 될 것 같은 기분이 들었다.”',
+        linkText: '온라인 서점 책 소개 보기'
+      },
+      {
+        id: 1,
+        category: '에세이',
+        title: '식지 않는 홍차의 온도',
+        year: '2024',
+        publisher: '아침산책',
+        emoji: '☕',
+        bgGradient: 'from-cream to-amber-50/80',
+        summary: '매일 아침 찻잔을 데우며 기록한 사계절의 단상들. 바쁜 하루 끝, 마음을 다독이는 마흔두 편의 짧은 편지.',
+        description: '작가가 지난 2년간 계절이 바뀔 때마다 찻잎을 우리며 써 내려간 산문집입니다. 창밖의 빗소리, 서랍 속 오래된 엽서, 골목길 빵집의 버터 냄새 등 사소하지만 우리를 살아가게 만드는 다정한 순간들에 대한 기록을 담았습니다.',
+        excerpt: '“찻물이 우러나는 3분이라는 시간은 생각보다 길어서, 그 짧은 틈새로 어제의 후회와 내일의 걱정이 조용히 가라앉는다. 내가 나를 돌본다는 건 거창한 결심이 아니라, 찻잔을 미리 따뜻하게 데워두는 일과 닮아 있다.”',
+        linkText: '도서 상세 정보 및 미리보기'
+      },
+      {
+        id: 2,
+        category: '단편',
+        title: '구름 우체국의 비밀 편지',
+        year: '2023',
+        publisher: '푸른문예',
+        emoji: '✉️',
+        bgGradient: 'from-rose-50 to-orange-50/70',
+        summary: '전하지 못한 진심이 모여드는 언덕 위 작은 우체국을 배경으로 펼쳐지는 일곱 편의 환상 동화적 단편집.',
+        description: '주소 불명으로 반송된 편지들이 바람을 타고 도착하는 언덕 위 ‘구름 우체국’. 그곳의 젊은 우체부가 편지 주인들을 찾아가며 마주하는 일곱 가지 사랑과 화해의 이야기를 담은 단편소설집입니다.',
+        excerpt: '“봉투 모서리가 낡아 솜털처럼 일어난 편지일수록 더 먼 길을 돌아온 것이었다. 우체부는 돋보기 너머로 희미해진 연필 글씨를 천천히 소리 내어 읽어보았다.”',
+        linkText: '전자책 및 종이책 열람 안내'
+      },
+      {
+        id: 3,
+        category: '소설',
+        title: '레몬 타르트가 익어가는 시간',
+        year: '2022',
+        publisher: '달빛서가',
+        emoji: '🍋',
+        bgGradient: 'from-yellow-50 to-cream',
+        summary: '바닷가 작은 마을의 베이커리에서 펼쳐지는 세 자매의 유쾌하고 다정한 성장 레시피.',
+        description: '서로 다른 도시에서 지치도록 달려온 세 자매가 할머니가 남긴 바닷가 디저트 가게를 함께 운영하게 되면서 벌어지는 일상을 그린 장편소설입니다. 상큼한 레몬 커드처럼 톡 쏘면서도 달콤한 가족의 이야기를 전합니다.',
+        excerpt: '“오븐 타이머가 경쾌하게 울리자 주방 가득 햇빛을 닮은 시트러스 향이 퍼졌다. 우리는 누가 먼저랄 것도 없이 앞치마에 밀가루를 묻힌 채 마주 보고 웃었다.”',
+        linkText: '온라인 서점 책 소개 보기'
+      },
+      {
+        id: 4,
+        category: '에세이',
+        title: '작은 방의 사계절 스케치',
+        year: '2021',
+        publisher: '아침산책',
+        emoji: '🌿',
+        bgGradient: 'from-emerald-50/60 to-ivory',
+        summary: '원룸 창가 화분 하나에서 시작된 초보 식집사의 다정한 관찰 일기와 계절 산문.',
+        description: '햇빛이 잘 들지 않는 작은 자취방에 작은 화분 하나를 들이면서 달라진 일상의 풍경을 담은 그림 에세이입니다. 작가가 직접 그린 소박한 연필 스케치와 함께 수록되었습니다.',
+        excerpt: '“새순이 돋아나는 속도는 인간의 시계로는 도무지 잴 수 없어서, 나는 매일 아침 물조리개를 들고 조금씩 기다리는 법을 배웠다.”',
+        linkText: '도서 상세 정보 보기'
+      },
+      {
+        id: 5,
+        category: '단편',
+        title: '창가의 귤빛 (등단작 수록집)',
+        year: '2020',
+        publisher: '문예시대',
+        emoji: '🍊',
+        bgGradient: 'from-orange-50 to-blush/50',
+        summary: '겨울의 끝자락, 낡은 전차 종점에서 만난 두 노인의 우정을 그린 신춘문예 당선작 외 5편.',
+        description: '서윤아 작가의 문학적 출발점을 확인할 수 있는 초기 단편 모음집입니다. 맑고 절제된 문장으로 인물 간의 미묘한 감정선을 따뜻하게 어루만집니다.',
+        excerpt: '“해 질 녘 창틀에 올려둔 귤 두 개가 마치 작은 등불처럼 붉게 빛나고 있었다. 겨울이 지나가고 있다는 가장 확실한 증거였다.”',
+        linkText: '작품집 서지 정보 확인'
+      }
+    ];
+
+    // 2. 페이지(뷰) 전환 기능
+    function navigateTo(pageId) {
+      // 모든 뷰 숨기기
+      document.querySelectorAll('.page-view').forEach(section => {
+        section.classList.remove('active');
+      });
+
+      // 선택한 뷰 활성화
+      const targetSection = document.getElementById(`page-${pageId}`);
+      if (targetSection) {
+        targetSection.classList.add('active');
+      }
+
+      // 데스크톱 메뉴 활성화 스타일 업데이트
+      document.querySelectorAll('.nav-link').forEach(btn => {
+        if (btn.dataset.nav === pageId) {
+          btn.classList.remove('text-muted');
+          btn.classList.add('text-coralDark', 'font-semibold');
+        } else {
+          btn.classList.remove('text-coralDark', 'font-semibold');
+          btn.classList.add('text-muted');
+        }
+      });
+
+      // 모바일 메뉴 활성화 스타일 업데이트
+      document.querySelectorAll('.mobile-nav-link').forEach(btn => {
+        if (btn.dataset.navMobile === pageId) {
+          btn.classList.add('bg-blush/70', 'text-coralDark');
+          btn.classList.remove('text-muted');
+        } else {
+          btn.classList.remove('bg-blush/70', 'text-coralDark');
+          btn.classList.add('text-muted');
+        }
+      });
+
+      // 모바일 메뉴가 열려있다면 닫기
+      const mobileMenu = document.getElementById('mobile-menu');
+      if (!mobileMenu.classList.contains('hidden')) {
+        toggleMobileMenu();
+      }
+
+      // 상단으로 부드럽게 스크롤
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // 모바일 메뉴 토글
+    function toggleMobileMenu() {
+      const mobileMenu = document.getElementById('mobile-menu');
+      const iconOpen = document.getElementById('menu-icon-open');
+      const iconClose = document.getElementById('menu-icon-close');
+
+      mobileMenu.classList.toggle('hidden');
+      iconOpen.classList.toggle('hidden');
+      iconClose.classList.toggle('hidden');
+    }
+
+    // 3. 작품소개 그리드 렌더링 & 필터링
+    let currentWorkFilter = 'all';
+
+    function renderWorksGrid(filter = 'all') {
+      const grid = document.getElementById('works-grid');
+      const filtered = filter === 'all'
+        ? worksData
+        : worksData.filter(work => work.category === filter);
+
+      grid.innerHTML = filtered.map(work => `
+        <article onclick="openWorkModal(${work.id})" class="group cursor-pointer bg-white rounded-2xl p-5 border border-stone-200/70 hover:border-coral/50 hover:shadow-md transition-all flex flex-col justify-between">
+          <div>
+            <div class="aspect-[4/3] rounded-xl bg-gradient-to-br ${work.bgGradient} mb-4 flex flex-col items-center justify-center p-5 relative overflow-hidden">
+              <span class="text-4xl mb-2.5 group-hover:scale-110 transition-transform duration-300">${work.emoji}</span>
+              <span class="font-serif text-sm font-semibold text-ink text-center leading-snug">${work.title}</span>
+              <span class="text-[11px] text-muted mt-1">${work.publisher} · ${work.year}</span>
+            </div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="px-2.5 py-0.5 rounded-full bg-blush/80 text-coralDark text-[11px] font-medium">${work.category}</span>
+              <span class="text-xs text-muted">${work.year}년 출간</span>
+            </div>
+            <h2 class="font-serif text-lg font-semibold text-ink group-hover:text-coralDark transition-colors">${work.title}</h2>
+            <p class="text-xs sm:text-sm text-muted mt-2 line-clamp-2 leading-relaxed">
+              ${work.summary}
+            </p>
+          </div>
+          <div class="mt-5 pt-3 border-t border-stone-100 flex items-center justify-between text-xs font-medium text-coralDark">
+            <span>작품 해설 & 발췌 보기</span>
+            <span class="group-hover:translate-x-0.5 transition-transform">→</span>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    function filterWorks(category) {
+      currentWorkFilter = category;
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        if (btn.dataset.filter === category) {
+          btn.classList.remove('bg-white', 'text-muted', 'border', 'border-stone-200');
+          btn.classList.add('bg-coral', 'text-white', 'shadow-sm');
+        } else {
+          btn.classList.remove('bg-coral', 'text-white', 'shadow-sm');
+          btn.classList.add('bg-white', 'text-muted', 'border', 'border-stone-200');
+        }
+      });
+      renderWorksGrid(category);
+    }
+
+    // 4. 작품 상세 모달 열기/닫기
+    function openWorkModal(workId) {
+      const work = worksData.find(w => w.id === workId);
+      if (!work) return;
+
+      const modal = document.getElementById('work-modal');
+      const content = document.getElementById('modal-content');
+
+      content.innerHTML = `
+        <div class="flex flex-col sm:flex-row gap-5 items-center sm:items-start pt-2">
+          <div class="w-28 h-36 rounded-2xl bg-gradient-to-br ${work.bgGradient} border border-stone-200/60 flex flex-col items-center justify-center p-3 shrink-0 shadow-xs">
+            <span class="text-3xl mb-1.5">${work.emoji}</span>
+            <span class="font-serif text-[11px] font-semibold text-ink text-center leading-tight">${work.title}</span>
+          </div>
+          <div class="text-center sm:text-left space-y-1.5">
+            <div class="inline-flex items-center gap-2">
+              <span class="px-2.5 py-0.5 rounded-full bg-blush text-coralDark text-xs font-medium">${work.category}</span>
+              <span class="text-xs text-muted">${work.publisher} · ${work.year}</span>
+            </div>
+            <h2 class="font-serif text-xl sm:text-2xl font-semibold text-ink">${work.title}</h2>
+            <p class="text-xs sm:text-sm text-muted leading-relaxed">${work.summary}</p>
+          </div>
+        </div>
+
+        <div class="space-y-4 pt-2 border-t border-stone-100">
+          <div>
+            <h3 class="text-xs font-semibold text-coralDark uppercase tracking-wider mb-1.5">작품 해설</h3>
+            <p class="text-sm text-ink/90 leading-relaxed">${work.description}</p>
+          </div>
+
+          <div class="bg-ivory rounded-2xl p-5 border border-stone-200/70">
+            <h3 class="text-xs font-semibold text-muted mb-2 flex items-center gap-1.5">
+              <span>❝</span> 책 속의 한 문장
+            </h3>
+            <blockquote class="font-serif text-sm sm:text-base text-ink leading-relaxed italic">
+              ${work.excerpt}
+            </blockquote>
+          </div>
+        </div>
+
+        <div class="pt-2 flex flex-col sm:flex-row items-center justify-end gap-2.5">
+          <button onclick="copyBookQuote('${work.title.replace(/'/g, "\\'")}')" class="w-full sm:w-auto px-4 py-2.5 rounded-full bg-cream text-ink text-xs font-medium hover:bg-blush/70 transition-colors">
+            발췌 문장 복사하기
+          </button>
+          <button onclick="showToast('〈${work.title}〉 서점 안내 페이지로 연결됩니다.'); closeWorkModal();" class="w-full sm:w-auto px-5 py-2.5 rounded-full bg-coral text-white text-xs font-medium hover:bg-coralDark transition-colors shadow-xs">
+            ${work.linkText} ↗
+          </button>
+        </div>
+      `;
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeWorkModal() {
+      const modal = document.getElementById('work-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      document.body.style.overflow = '';
+    }
+
+    function closeWorkModalOnBackdrop(event) {
+      if (event.target.id === 'work-modal') {
+        closeWorkModal();
+      }
+    }
+
+    function copyBookQuote(title) {
+      const work = worksData.find(w => w.title === title);
+      if (!work) return;
+      const textToCopy = `${work.excerpt} - 서윤아, 《${work.title}》 중에서`;
+      
+      const tempInput = document.createElement('textarea');
+      tempInput.value = textToCopy;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand('copy');
+      document.body.removeChild(tempInput);
+
+      showToast('책 속 문장이 클립보드에 복사되었습니다.');
+    }
+
+    // 5. 방명록 (LocalStorage 연동 + 공감 + 비밀번호 삭제)
+    const STORAGE_KEY = 'seoyoonah_guestbook_v1';
+
+    const initialGuestbookEntries = [
+      {
+        id: 'sample-1',
+        name: '달빛산책자',
+        password: '1234',
+        message: '《리본을 맨 흰 고양이의 오후》를 읽고 마음이 한결 따뜻해졌습니다. 작가님 특유의 포근한 문장 덕분에 올봄을 다정하게 보낼 수 있을 것 같아요. 다음 작품도 설레는 마음으로 기다리겠습니다!',
+        date: '2026. 11. 10',
+        likes: 12,
+        liked: false
+      },
+      {
+        id: 'sample-2',
+        name: '홍차와고양이',
+        password: '1234',
+        message: '작가님 홈페이지 분위기가 너무 사랑스럽고 깔끔하네요! 메인에 있는 키티 일러스트도 작가님 작품 감성과 찰떡이에요. 항상 건강하시고 좋은 글 많이 써주세요 :)',
+        date: '2026. 11. 05',
+        likes: 8,
+        liked: false
+      },
+      {
+        id: 'sample-3',
+        name: '부산독자 지은',
+        password: '1234',
+        message: '《식지 않는 홍차의 온도》를 머리맡에 두고 매일 밤 한 편씩 읽고 있습니다. 지친 하루를 다독여주셔서 진심으로 감사드립니다.',
+        date: '2026. 10. 28',
+        likes: 15,
+        liked: false
+      }
+    ];
+
+    function getGuestbookEntries() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (!saved) {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(initialGuestbookEntries));
+          return initialGuestbookEntries;
+        }
+        return JSON.parse(saved);
+      } catch (e) {
+        return initialGuestbookEntries;
+      }
+    }
+
+    function saveGuestbookEntries(entries) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+      } catch (e) {
+        console.error('LocalStorage 저장 오류:', e);
+      }
+    }
+
+    function renderGuestbook() {
+      const listEl = document.getElementById('guestbook-list');
+      const countEl = document.getElementById('gb-count');
+      const entries = getGuestbookEntries();
+
+      countEl.textContent = entries.length;
+
+      if (entries.length === 0) {
+        listEl.innerHTML = `
+          <div class="bg-white rounded-2xl p-10 text-center border border-stone-200/60 text-sm text-muted">
+            아직 남겨진 방명록이 없습니다. 첫 번째 응원 메시지를 남겨주세요!
+          </div>
+        `;
+        return;
+      }
+
+      listEl.innerHTML = entries.map(entry => `
+        <div class="bg-white rounded-2xl p-5 sm:p-6 border border-stone-200/70 shadow-2xs transition-all hover:border-stone-300">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2.5">
+              <span class="w-8 h-8 rounded-full bg-blush text-coralDark font-serif text-xs font-semibold flex items-center justify-center">
+                ${escapeHtml(entry.name.charAt(0))}
+              </span>
+              <div>
+                <h3 class="text-sm font-semibold text-ink">${escapeHtml(entry.name)}</h3>
+                <span class="text-[11px] text-muted">${entry.date}</span>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <!-- 공감(하트) 버튼 -->
+              <button onclick="toggleLikeGuestbook('${entry.id}')" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${entry.liked ? 'bg-blush text-coralDark border border-coral/30' : 'bg-ivory text-muted hover:bg-blush/50 hover:text-coralDark border border-stone-200/60'}">
+                <span>${entry.liked ? '♥' : '♡'}</span>
+                <span>${entry.likes}</span>
+              </button>
+
+              <!-- 삭제 버튼 -->
+              <button onclick="openDeleteModal('${entry.id}')" class="p-1.5 rounded-lg text-muted hover:text-rose-600 hover:bg-rose-50 transition-colors" title="삭제" aria-label="방명록 삭제">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <p class="text-sm text-ink/90 leading-relaxed whitespace-pre-line pl-0 sm:pl-10">
+            ${escapeHtml(entry.message)}
+          </p>
+        </div>
+      `).join('');
+    }
+
+    function handleGuestbookSubmit(event) {
+      event.preventDefault();
+      const nameInput = document.getElementById('gb-name');
+      const pwdInput = document.getElementById('gb-password');
+      const msgInput = document.getElementById('gb-message');
+
+      const name = nameInput.value.trim();
+      const password = pwdInput.value.trim();
+      const message = msgInput.value.trim();
+
+      if (!name || !password || !message) return;
+
+      const today = new Date();
+      const dateStr = `${today.getFullYear()}. ${String(today.getMonth() + 1).padStart(2, '0')}. ${String(today.getDate()).padStart(2, '0')}`;
+
+      const newEntry = {
+        id: 'gb-' + Date.now(),
+        name,
+        password,
+        message,
+        date: dateStr,
+        likes: 0,
+        liked: false
+      };
+
+      const entries = getGuestbookEntries();
+      entries.unshift(newEntry);
+      saveGuestbookEntries(entries);
+
+      nameInput.value = '';
+      pwdInput.value = '';
+      msgInput.value = '';
+
+      renderGuestbook();
+      showToast('소중한 방명록이 등록되었습니다.');
+    }
+
+    function toggleLikeGuestbook(id) {
+      const entries = getGuestbookEntries();
+      const target = entries.find(item => item.id === id);
+      if (!target) return;
+
+      if (target.liked) {
+        target.likes = Math.max(0, target.likes - 1);
+        target.liked = false;
+      } else {
+        target.likes += 1;
+        target.liked = true;
+      }
+
+      saveGuestbookEntries(entries);
+      renderGuestbook();
+    }
+
+    // 삭제 모달 제어
+    let pendingDeleteId = null;
+
+    function openDeleteModal(id) {
+      pendingDeleteId = id;
+      const modal = document.getElementById('delete-modal');
+      const input = document.getElementById('delete-pwd-input');
+      const errMsg = document.getElementById('delete-error-msg');
+
+      input.value = '';
+      errMsg.classList.add('hidden');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      input.focus();
+    }
+
+    function closeDeleteModal() {
+      pendingDeleteId = null;
+      const modal = document.getElementById('delete-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function confirmDeleteGuestbook() {
+      if (!pendingDeleteId) return;
+      const input = document.getElementById('delete-pwd-input');
+      const errMsg = document.getElementById('delete-error-msg');
+      const enteredPwd = input.value.trim();
+
+      const entries = getGuestbookEntries();
+      const target = entries.find(item => item.id === pendingDeleteId);
+
+      if (!target) {
+        closeDeleteModal();
+        return;
+      }
+
+      if (target.password === enteredPwd) {
+        const updated = entries.filter(item => item.id !== pendingDeleteId);
+        saveGuestbookEntries(updated);
+        renderGuestbook();
+        closeDeleteModal();
+        showToast('방명록 글이 삭제되었습니다.');
+      } else {
+        errMsg.classList.remove('hidden');
+        input.focus();
+      }
+    }
+
+    // XSS 방지용 HTML 이스케이프 함수
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    // 커스텀 토스트 메시지
+    let toastTimer = null;
+    function showToast(message) {
+      const toastBox = document.getElementById('toast-box');
+      const toastText = document.getElementById('toast-text');
+      toastText.textContent = message;
+
+      toastBox.classList.remove('opacity-0', 'translate-y-2');
+      toastBox.classList.add('opacity-100', 'translate-y-0');
+
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toastBox.classList.remove('opacity-100', 'translate-y-0');
+        toastBox.classList.add('opacity-0', 'translate-y-2');
+      }, 2600);
+    }
+
+    // 초기 로드 실행
+    window.addEventListener('DOMContentLoaded', () => {
+      renderWorksGrid('all');
+      renderGuestbook();
+    });
+  </script>
+</body>
+</html>
